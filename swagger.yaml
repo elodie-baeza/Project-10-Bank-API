@@ -143,6 +143,45 @@ paths:
                 type: "integer"
                 format: "int32"
   /user/{userId}/transaction/{transactionId}:
+      get:
+        security:
+        - Bearer: []
+        tags:
+        - Transactions
+        summary: Get transaction by id
+        description: Return transaction
+        operationId: getTransactionById
+        produces:
+        - application/json
+        parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          description: Unique identifiant of user
+          required: true
+          type: string
+        - in: path
+          name: transactionId
+          description: Unique identifiant of transaction
+          required: true
+          type: string
+        responses:
+          "200":
+            description: "successful operation"
+            schema:
+              type: "object"
+              additionalProperties:
+                type: "integer"
+                format: "int32"
+          "400":
+            description: "Invalid transaction supplied"
+          "404":
+            description: "Transaction not found"
+      put:
 securityDefinitions:
   Bearer:
     type: apiKey
