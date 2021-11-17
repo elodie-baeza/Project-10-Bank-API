@@ -166,3 +166,38 @@ definitions:
         type: string
       lastName:
         type: string
+  Transaction:
+    type: object
+    required:
+      - date
+      - description
+      - amount
+      - transaction type
+    properties:
+      id:
+        type: string
+        format: uuid
+        minLength: 24
+        maxLength: 24
+      date: 
+        type: string
+        format: date
+        pattern: YYYY-MM-DD
+        minLength: 0
+        maxLength: 10
+      description: 
+        type: string
+      amount: 
+        type: number
+      balance:
+        type: number
+      transaction type:
+        type: string
+        enum: 
+        - electronic
+      category:
+        type: string
+        enum:
+        - food
+      notes:
+        type: string
