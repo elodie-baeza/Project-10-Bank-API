@@ -211,6 +211,37 @@ paths:
             description: "Invalid Fields"
           "500":
             description: "Internal Server Error"
+      delete:
+        security:
+          - Bearer: []
+        tags:
+          - Transactions
+        summary: Delete Transaction
+        description: Remove a transaction
+        operationId: deleteTransaction
+        parameters:
+          - in: header
+            name: Authorization
+            description: Attach Bearer JWT token
+            required: true
+            type: string
+          - in: path
+            name: userId
+            description: Unique user identifiant
+            required: true
+            type: string
+          - in: path
+            name: transactionId
+            description: Update user profile attributes
+            required: true
+            type: string
+        produces:
+          - application/json
+        responses:
+          '400':
+            description: Invalid ID supplied
+          '500':
+            description: Transaction not found
 securityDefinitions:
   Bearer:
     type: apiKey
