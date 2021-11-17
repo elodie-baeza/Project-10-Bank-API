@@ -242,6 +242,50 @@ paths:
             description: Invalid ID supplied
           '500':
             description: Transaction not found
+  /user/{userId}/transaction:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions
+      summary: Add new transaction
+      description: API for add new transaction
+      operationId: addTransaction
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          description: Unique user identifiant
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Transaction object that needs to be added
+          required: true
+          schema:
+           $ref: '#/definitions/Transaction'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transaction retrieved successully
+          schema:
+            allOf:
+              - $ref: '#/definitions/Transaction'
+              - type: object
+                required:
+                  - balance
+                properties:
+                  balance:
+                    type: number
+        '400':
+          description: Invalid Transaction
+        '500':
+          description: Internal Server Error
 securityDefinitions:
   Bearer:
     type: apiKey
@@ -318,8 +362,6 @@ definitions:
       description: 
         type: string
       amount: 
-        type: number
-      balance:
         type: number
       transaction type:
         type: string
