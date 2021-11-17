@@ -112,6 +112,37 @@ paths:
           description: Invalid Fields
         '500':
           description: Internal Server Error
+  /{userId}/transactions:
+      get:
+        security:
+        - Bearer: []
+        tags:
+        - Transactions
+        summary: User transactions history
+        description: Returns transactions history of current month
+        operationId: getTransactions
+        produces:
+        - application/json
+        parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          description: Unique user identifiant
+          required: true
+          type: string
+        responses:
+          "200":
+            description: "successful operation"
+            schema:
+              type: "object"
+              additionalProperties:
+                type: "integer"
+                format: "int32"
+  /user/{userId}/transaction/{transactionId}:
 securityDefinitions:
   Bearer:
     type: apiKey
