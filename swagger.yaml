@@ -52,7 +52,17 @@ paths:
         '200':
           description: Signup Successfully
           schema:
-            $ref: '#/definitions/ApiResponse'
+            allOf:
+              - $ref: '#/definitions/ApiResponse'
+              - type: object
+                properties:
+                  body:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string  
         '400':
           description: Invalid Fields
         '500':
@@ -119,7 +129,7 @@ paths:
         tags:
         - Transactions
         summary: User transactions history
-        description: Returns transactions history of current month
+        description: Returns the transaction history for one month of the current user
         operationId: getTransactions
         produces:
         - application/json
@@ -140,16 +150,29 @@ paths:
             schema:
               type: "object"
               additionalProperties:
-                type: "integer"
-                format: "int32"
+                allOf:
+                  - $ref: '#/definitions/Transaction'
+                  - type: object
+                    required:
+                      - id
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        minLength: 24
+                        maxLength: 24
+          "400":
+            description: "Invalid user supplied"
+          "404":
+            description: "Transactions history not found"
   /user/{userId}/transaction/{transactionId}:
       get:
         security:
         - Bearer: []
         tags:
-        - Transactions
+        - Transaction
         summary: Get transaction by id
-        description: Return transaction
+        description: Return transactionn of tne current user
         operationId: getTransactionById
         produces:
         - application/json
@@ -173,10 +196,8 @@ paths:
           "200":
             description: "successful operation"
             schema:
-              type: "object"
-              additionalProperties:
-                type: "integer"
-                format: "int32"
+              allOf:
+                - $ref: '#/definitions/Transaction'
           "400":
             description: "Invalid transaction supplied"
           "404":
@@ -185,9 +206,9 @@ paths:
         security:
           - Bearer: []
         tags:
-          - Transactions
+          - Transaction
         summary: Update an existing transaction
-        description: Modify an existing transaction
+        description: Modify an existing transaction of tne current user
         operationId: updateTransaction
         produces:
           - "application/xml"
@@ -203,8 +224,23 @@ paths:
             description: Updated transaction
             required: true
             schema:
-              $ref: "#/definitions/Transaction"
+              type: object
+              properties:
+                category:
+                  type: string
+                  enum:
+                  - food
+                notes:
+                  type: string
+                  maxLength: 32
+          - in: path
+            name: transactionId
+            description: Unique identifiant of transaction
+            required: true
+            type: string
         responses:
+          "200":
+            description: "successful operation"
           "400":
             description: "Invalid ID supplied"
           "404":
@@ -215,9 +251,9 @@ paths:
         security:
           - Bearer: []
         tags:
-          - Transactions
+          - Transaction
         summary: Delete Transaction
-        description: Remove a transaction
+        description: Remove a transaction of tne current user
         operationId: deleteTransaction
         parameters:
           - in: header
@@ -238,18 +274,22 @@ paths:
         produces:
           - application/json
         responses:
+          "200":
+            description: successful operation
           '400':
             description: Invalid ID supplied
-          '500':
+          '404':
             description: Transaction not found
+          "500":
+            description: Internal Server Error
   /user/{userId}/transaction:
     post:
       security:
         - Bearer: []
       tags:
-        - Transactions
+        - Transaction
       summary: Add new transaction
-      description: API for add new transaction
+      description: API for add new transaction of tne current user
       operationId: addTransaction
       parameters:
         - in: header
@@ -275,13 +315,20 @@ paths:
           description: Transaction retrieved successully
           schema:
             allOf:
-              - $ref: '#/definitions/Transaction'
+              - $ref: '#/definitions/ApiResponse'
               - type: object
                 required:
-                  - balance
+                  - id
                 properties:
-                  balance:
-                    type: number
+                  body:
+                    properties:
+                      balance:
+                        type: number
+                      id:
+                        type: string
+                        format: uuid
+                        minLength: 24
+                        maxLength: 24
         '400':
           description: Invalid Transaction
         '500':
@@ -321,13 +368,6 @@ definitions:
         type: integer
       message:
         type: string
-      body:
-        type: object
-        properties:
-          id:
-            type: string
-          email:
-            type: string
   LoginResponse:
     type: object
     properties:
@@ -348,11 +388,6 @@ definitions:
       - amount
       - transaction type
     properties:
-      id:
-        type: string
-        format: uuid
-        minLength: 24
-        maxLength: 24
       date: 
         type: string
         format: date
@@ -373,3 +408,4 @@ definitions:
         - food
       notes:
         type: string
+        maxLength: 32
